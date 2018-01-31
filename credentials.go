@@ -19,7 +19,7 @@ var (
 	// matches char that is not valid in a STS role session name
 	invalidSessionNameRegexp = regexp.MustCompile(`[^\w+=,.@-]`)
 
-	sessionExpiration = 5 * time.Minute
+	sessionExpiration = 15 * time.Minute
 )
 
 type credentials struct {

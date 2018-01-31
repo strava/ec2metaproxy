@@ -222,8 +222,6 @@ func newContainerService(platform string) (containerService, error) {
 	switch platform {
 	case "docker":
 		return newDockerContainerService(*dockerEndpoint)
-	case "flynn":
-		return newFlynnContainerService(*flynnEndpoint)
 	default:
 		return nil, fmt.Errorf("Unknown container platform: %s", platform)
 	}

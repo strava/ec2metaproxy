@@ -1,7 +1,7 @@
 PROJECT_ROOT:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 PROJECT_PACKAGE=github.com/dump247/ec2metaproxy
 
-DOCKER_IMAGE=dump247/ec2metaproxy
+DOCKER_IMAGE=docker.strava.com/dump247/ec2metaproxy:15min
 
 GO15VENDOREXPERIMENT=1
 
@@ -10,7 +10,7 @@ CMD_DIRS=${PROJECT_PACKAGE}
 
 .PHONY: clean build test compile fmt docker-image
 
-build: fmt lint test compile
+build: fmt test compile
 
 compile:
 	go install ${CMD_DIRS}
@@ -28,7 +28,7 @@ clean:
 	go clean -i ${SRC_DIRS}
 
 docker-image: clean
-	docker pull dump247/ec2metaproxy-build
+	docker build -t dump247/ec2metaproxy-build -f Dockerfile.build .
 	docker run --rm -v ${GOPATH}:/go -w=/go/src/${PROJECT_PACKAGE} dump247/ec2metaproxy-build make
 	@cp ${PROJECT_ROOT}/Dockerfile ${GOPATH}/bin/
 	docker build -t ${DOCKER_IMAGE} ${GOPATH}/bin/

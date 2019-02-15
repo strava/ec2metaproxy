@@ -78,7 +78,7 @@ func (d *dockerContainerService) syncContainer(containerIP string, oldInfo docke
 func (d *dockerContainerService) syncContainers(now time.Time) {
 	log.Info("Synchronizing state with running docker containers")
 	apiContainers, err := d.docker.ListContainers(docker.ListContainersOptions{
-		All:    true,  // only running containers
+		All:    true,  // fetch all containers
 		Size:   false, // do not need size information
 		Limit:  0,     // all running containers
 		Since:  "",    // not applicable

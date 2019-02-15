@@ -106,6 +106,11 @@ func (d *dockerContainerService) syncContainers(now time.Time) {
 			continue
 		}
 
+		if !container.State.Running {
+			log.Info("Skipping non-running container: id=", apiContainer.ID, " status=", container.State.Status)
+			continue
+		}
+
 		var containerIPs []string
 		if container.NetworkSettings.IPAddress != "" {
 			containerIPs = append(containerIPs, container.NetworkSettings.IPAddress)

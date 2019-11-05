@@ -265,7 +265,7 @@ func main() {
 		// others are not as straightforward so a catch all fix is to do the
 		// redirect behavior here in the metaproxy rather than relying on AWS.
 		// https://github.com/aws/aws-sdk-go/commit/3cec29ed96b559eedd1d5f503804a940d7de21a7
-		redirectMatch := credsRedirectRegex.FindStringSumbmatch(r.URL.Path)
+		redirectMatch := credsRedirectRegex.FindStringSubmatch(r.URL.Path)
 		if redirectMatch != nil {
 			http.Redirect(w, r, r.URL.Path+"/", 301)
 			return

@@ -15,7 +15,8 @@ import (
 )
 
 var (
-	credsRegex = regexp.MustCompile("^/(.+?)/meta-data/iam/security-credentials/(.*)$")
+	credsRegex         = regexp.MustCompile("^/(.+?)/meta-data/iam/security-credentials/(.*)$")
+	credsRedirectRegex = regexp.MustCompile("^/(.+?)/meta-data/iam/security-credentials$")
 
 	instanceServiceClient = &http.Transport{}
 )
@@ -248,6 +249,25 @@ func main() {
 		match := credsRegex.FindStringSubmatch(r.URL.Path)
 		if match != nil {
 			handleCredentials(*metadataURL, match[1], match[2], credentials, w, r)
+			return
+		}
+
+		// The AWS Metadata service used to have a behavior that when
+		// /meta-data/iam/security-credentials (without an ending slash) was
+		// requested, it would redirect to the same URL with the trailing
+		// slash. This in turn would then be matched against the credsRegex and
+		// therefore the metaproxy would be able to provide the correct role
+		// name in response. We have observed that some instances no longer
+		// have this redirect behavior. We know that there are some Go apps in
+		// our infrastructure that have old versions of the AWS SDK that
+		// depended on this redirect for requesting security credentials
+		// (unsure of apps in other languages). While some are easy to upgrade,
+		// others are not as straightforward so a catch all fix is to do the
+		// redirect behavior here in the metaproxy rather than relying on AWS.
+		// https://github.com/aws/aws-sdk-go/commit/3cec29ed96b559eedd1d5f503804a940d7de21a7
+		redirectMatch := credsRedirectRegex.FindStringSubmatch(r.URL.Path)
+		if redirectMatch != nil {
+			http.Redirect(w, r, r.URL.Path+"/", 301)
 			return
 		}
 

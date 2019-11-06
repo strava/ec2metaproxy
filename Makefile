@@ -1,7 +1,7 @@
 PROJECT_ROOT:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 PROJECT_PACKAGE=github.com/dump247/ec2metaproxy
 
-DOCKER_IMAGE=docker.strava.com/dump247/ec2metaproxy:15min
+DOCKER_IMAGE=docker.strava.com/strava/ec2metaproxy:dtw-redirect
 
 GO15VENDOREXPERIMENT=1
 
